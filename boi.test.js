@@ -10,7 +10,7 @@
 
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
-import { comportamientos, escanear, marca, registrar } from "./boi.js";
+import { comportamientos, enganchar, escanear, marca, registrar } from "./boi.js";
 
 // ── Un doble de DOM mínimo ────────────────────────────────────────────────────
 // Un "elemento" con lo justo que el escáner toca: atributos, matches, y un árbol
@@ -118,4 +118,44 @@ test("escanear tolera una raíz que no es un elemento (sin DOM, sin crash)", () 
   escanear({}); // sin querySelectorAll
   // Si llegamos aquí sin lanzar, pasa.
   assert.equal(true, true);
+});
+
+// ── El rastro que hace observable a boi desde un E2E ──────────────────────────
+
+test("enganchar marca el documento: es lo único que un E2E puede mirar", () => {
+  limpiar();
+  const oyentes = [];
+  const raiz = elem("html");
+  const doc = {
+    documentElement: raiz,
+    body: elem("body"),
+    addEventListener: (ev) => oyentes.push(ev),
+  };
+
+  enganchar(doc);
+
+  assert.equal(
+    raiz.hasAttribute("data-boi"),
+    true,
+    "sin la marca, «el módulo cargó» y «el navegador no lo ejecutó» se ven igual",
+  );
+  // Y sigue haciendo lo suyo: la marca no sustituye al enganche.
+  assert.deepEqual(oyentes, ["DOMContentLoaded", "htmx:load"]);
+});
+
+// La pareja (directiva 33): el caso que TIENE que no marcar. Si `enganchar`
+// marcara pase lo que pase, el E2E daría verde con boi muerto — que es
+// exactamente el fallo que la marca existe para detectar.
+test("un documento inservible NO se marca: la marca miente si es incondicional", () => {
+  limpiar();
+  const raiz = elem("html");
+  // Sin `addEventListener` no hay enganche posible, así que tampoco hay nada
+  // que anunciar. `enganchar` sale antes de tocar el documento.
+  enganchar({ documentElement: raiz, body: elem("body") });
+
+  assert.equal(
+    raiz.hasAttribute("data-boi"),
+    false,
+    "se marcó un documento al que boi no llegó a engancharse",
+  );
 });
