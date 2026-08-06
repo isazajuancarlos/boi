@@ -1,0 +1,4 @@
+# No hay build ni node_modules a propósito: boi se sirve tal cual.
+# Este archivo existe para que un despiste (un `npm install` accidental) no entre.
+node_modules/
+*.log

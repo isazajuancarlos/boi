@@ -1,0 +1,26 @@
+# CI de boi. Repo PÚBLICO: minutos de Actions gratis, cero cupo.
+# Solo `node --test` — sin npm, sin instalar dependencias, sin build.
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}${{ github.ref == 'refs/heads/main' && format('-{0}', github.sha) || '' }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'   # LTS (directiva 35). node --test es nativo: sin npm ci.
+      - run: node --test
