@@ -59,9 +59,18 @@ existe para no cometer — el `.gitignore` bloquea `node_modules/` por si acaso.
   razón entera de la directiva 9 en una línea: un defecto en código copiado se
   arregla una vez por copia, y solo si alguien se acuerda.
 
-  **Pendiente, y es cross-repo**: `chasqui` e `informes` siguen con su copia.
-  Cambiarlas por ésta es un cambio en dos productos con despliegue propio, así
-  que se propone, no se hace solo.
+  **Las tres copias están retiradas** (2026-08-07, el mismo día). `chasqui`
+  (`8b87d00`, rama `feat/panel-en-maud`) e `informes` (`92b658e`, rama
+  `deps/boi-confirmar-doble-compartido`) vendorizan ya este archivo; `medico`
+  nació con él. Los tres lo sirven bajo **`/comportamientos/`** y no en la raíz,
+  porque el archivo importa `from "../boi.js"` y se vendoriza SIN TOCAR — que es
+  lo que hace comprobable con `md5sum` que es el mismo en todos (directiva 26).
+  Editarle el import al vendorizarlo sería romper justo esa garantía.
+
+  `chasqui` conserva su `comportamientos.js` con `autoscroll`, que solo usa él:
+  un comportamiento de un consumidor **no** sube a la librería. Es la directiva 9
+  en su otra dirección, y conviene tenerla escrita — si no, este directorio se
+  llena de cosas que nadie más quiere.
 - **`boi.test.js`** — la lógica del escáner con un doble de DOM mínimo (sin
   navegador). El comportamiento real en un navegador se prueba E2E con Chromium
   headless desde cada proyecto (directiva 28) — no cabe aquí.
