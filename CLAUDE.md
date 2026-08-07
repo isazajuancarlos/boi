@@ -39,11 +39,29 @@ existe para no cometer — el `.gitignore` bloquea `node_modules/` por si acaso.
   (`enganchar`, a `DOMContentLoaded` y `htmx:load`). ~90 líneas, legible de una
   sentada. Se auto-instala en `globalThis.boi` y auto-engancha SOLO si hay
   `document` (en las pruebas no, para poder inyectar un doble).
-- **`comportamientos/*.js`** (aún no hay ninguno) — cada comportamiento concreto
-  (máscara, validación, confirmación…) en su archivo, importando `registrar`. **Se
-  añaden desde lo que un proyecto real pide, con su prueba; nunca por
-  especulación** (directiva 9). El catálogo lo llena el uso, empezando por el
-  primer proyecto que estrene boi.
+- **`comportamientos/*.js`** — cada comportamiento concreto (máscara, validación,
+  confirmación…) en su archivo, importando `registrar`, **con su `.test.js` al
+  lado**. Se añaden desde lo que un proyecto real pide; nunca por especulación
+  (directiva 9). El catálogo lo llena el uso.
+
+  | comportamiento | qué hace | lo pidió |
+  |---|---|---|
+  | `confirmar-doble` | una acción irreversible exige dos pulsaciones | chasqui (2026-08-06), copiado en informes, y `medico` iba a ser la tercera copia |
+
+  **`confirmar-doble` nació ya escrito dos veces**, y ése es el argumento de por
+  qué este directorio existe: el archivo de informes decía literalmente «se copia
+  y no se reescribe porque hoy no hay forma de compartir un comportamiento entre
+  proyectos sin publicarlo». Sí la hay, y es la misma por la que viaja `boi.js`:
+  vendorizado dentro de cada binario.
+
+  Y al unificarlo salió un defecto que las DOS copias tenían —`stopPropagation()`
+  no corta a los oyentes del mismo nodo, que es donde htmx pone el suyo—. Es la
+  razón entera de la directiva 9 en una línea: un defecto en código copiado se
+  arregla una vez por copia, y solo si alguien se acuerda.
+
+  **Pendiente, y es cross-repo**: `chasqui` e `informes` siguen con su copia.
+  Cambiarlas por ésta es un cambio en dos productos con despliegue propio, así
+  que se propone, no se hace solo.
 - **`boi.test.js`** — la lógica del escáner con un doble de DOM mínimo (sin
   navegador). El comportamiento real en un navegador se prueba E2E con Chromium
   headless desde cada proyecto (directiva 28) — no cabe aquí.
