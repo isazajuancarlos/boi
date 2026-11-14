@@ -1,0 +1,47 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: MIT -->
+<!--
+  Corre UN archivo de pruebas de lógica dentro de Chromium — el motor JS que el
+  stack acepta— en vez de en node. La página solo LANZA un Worker de módulo (que
+  es donde de verdad corren las pruebas, sin `document`, como node) y RELEVA su
+  informe al servidor por `sendBeacon`. Un archivo por carga, para aislar el
+  estado de módulo igual que `node --test` aísla por proceso.
+  Ver banco/MIGRACION.md (F2).
+-->
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <title>banco de boi — pruebas de lógica</title>
+    <meta name="boi-informe" content="__RUTA_DEL_INFORME__">
+  </head>
+  <body>
+    <script type="module">
+      const ruta = () =>
+        document.querySelector('meta[name="boi-informe"]').getAttribute("content");
+      let mandado = false;
+      function mandar(obj) {
+        if (mandado) return;
+        mandado = true;
+        navigator.sendBeacon(ruta(), JSON.stringify(obj));
+      }
+
+      const archivo = new URLSearchParams(location.search).get("archivo");
+
+      // Plazo del propio conductor: el informe llega con lo que se alcanzó a ver
+      // en vez de no llegar (directiva 30).
+      setTimeout(() => mandar({ archivo, pruebas: [], fallos: ["plazo agotado"], plazoAgotado: true }), 25000);
+
+      try {
+        const w = new Worker(
+          "/arnes/trabajador.js?archivo=" + encodeURIComponent(archivo),
+          { type: "module" },
+        );
+        w.onmessage = (e) => mandar(e.data);
+        w.onerror = (e) =>
+          mandar({ archivo, pruebas: [], fallos: ["worker: " + (e.message || String(e))] });
+      } catch (err) {
+        mandar({ archivo, pruebas: [], fallos: ["no pude lanzar el worker: " + String(err)] });
+      }
+    </script>
+  </body>
+</html>

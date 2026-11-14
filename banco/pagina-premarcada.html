@@ -1,0 +1,30 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: MIT -->
+<!--
+  Un botón de confirmación que llega YA MARCADO con `boi-confirmar-doble-listo`,
+  que es exactamente el estado que produce la caché de historial de htmx al
+  volver con el botón Atrás: guarda el `innerHTML` con los atributos puestos.
+
+  El escáner salta el `init` de lo marcado. Si la barrera dependiera del `init`,
+  aquí no habría barrera y la acción irreversible saldría a la primera pulsación.
+-->
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <title>banco de boi — botón premarcado</title>
+    <meta name="boi-informe" content="__RUTA_DEL_INFORME__">
+    <script src="/htmx.min.js"></script>
+    <script type="module" src="/boi.js"></script>
+    <script type="module" src="/comportamientos/confirmar-doble.js"></script>
+  </head>
+  <body>
+    <button id="peligro"
+            hx-post="/accion"
+            hx-swap="none"
+            data-confirmar="¿Seguro? Pulse otra vez"
+            boi-confirmar-doble-listo>
+      Borrar la historia clínica
+    </button>
+    <script type="module" src="/conductor-premarcado.js"></script>
+  </body>
+</html>

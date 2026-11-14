@@ -1,0 +1,37 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: MIT -->
+<!--
+  Página del banco de `esqueleto`. Un panel con [data-esqueleto] que contiene un
+  disparador de htmx (persiste, no se reemplaza) y una zona de resultados que sí
+  se recarga. Es la topología robusta: la petición nace DENTRO del panel y
+  burbujea hasta él (esqueleto se engancha ahí), y el disparador sobrevive al
+  swap para que `htmx:afterRequest` burbujee y cierre el esqueleto.
+
+  Las hojas llevan tamaño explícito para que `getBoundingClientRect` mida cajas
+  reales (> 2px): el banco compara los bloques del shimmer contra estas cajas.
+-->
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <title>banco de esqueleto</title>
+    <meta name="boi-informe" content="__RUTA_DEL_INFORME__">
+    <script src="/htmx.min.js"></script>
+    <script type="module" src="/boi.js"></script>
+    <script type="module" src="/comportamientos/esqueleto.js"></script>
+  </head>
+  <body>
+    <div id="panel" data-esqueleto>
+      <button id="recargar" style="display:block;width:120px;height:24px"
+              hx-get="/fragmento" hx-target="#resultados" hx-swap="innerHTML">
+        recargar
+      </button>
+      <div id="resultados">
+        <p style="height:20px;margin:4px 0">fila uno</p>
+        <p style="height:20px;margin:4px 0">fila dos</p>
+        <span style="display:inline-block;width:80px;height:18px">etiqueta</span>
+      </div>
+    </div>
+
+    <script type="module" src="/conductor-esqueleto.js"></script>
+  </body>
+</html>

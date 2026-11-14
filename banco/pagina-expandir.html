@@ -1,0 +1,32 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: MIT -->
+<!--
+  Página del banco de `expandir`. Una "fila" clicable con tres piezas: una zona
+  muerta (texto), un enlace que dispara htmx a /fragmento, y un botón propio que
+  hace su propia acción (/accion, que el servidor CUENTA). El banco comprueba, en
+  un navegador de verdad, que un clic en la zona muerta REENVÍA al enlace (y htmx
+  trae el fragmento), que un clic en el botón propio NO dispara el enlace, y que
+  con texto seleccionado tampoco —la rama que el Worker no puede medir—.
+-->
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <title>banco de expandir</title>
+    <meta name="boi-informe" content="__RUTA_DEL_INFORME__">
+    <script src="/htmx.min.js"></script>
+    <script type="module" src="/boi.js"></script>
+    <script type="module" src="/comportamientos/expandir.js"></script>
+  </head>
+  <body>
+    <div id="fila" data-expandir style="width:320px;padding:8px">
+      <span id="zona" style="display:inline-block;width:120px;height:20px">zona muerta</span>
+      <a id="enlace" href="javascript:void(0)"
+         hx-get="/fragmento" hx-target="#salida" hx-swap="innerHTML">ver</a>
+      <button id="propio" style="width:70px;height:20px"
+              hx-post="/accion" hx-swap="none">borrar</button>
+    </div>
+    <div id="salida"></div>
+
+    <script type="module" src="/conductor-expandir.js"></script>
+  </body>
+</html>

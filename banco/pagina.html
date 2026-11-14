@@ -1,0 +1,29 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: MIT -->
+<!--
+  La página del banco. Se parece a propósito a la que teje maud en un proyecto
+  real: htmx primero, boi como módulo, y el comportamiento en
+  `/comportamientos/`, que es la ruta bajo la que lo vendorizan los cuatro
+  consumidores —el archivo importa `../boi.js` y esa ruta relativa tiene que
+  resolver sin editarlo—.
+-->
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <title>banco de navegador de boi</title>
+    <meta name="boi-informe" content="__RUTA_DEL_INFORME__">
+    <script src="/htmx.min.js"></script>
+    <script type="module" src="/boi.js"></script>
+    <script type="module" src="/comportamientos/contar.js"></script>
+  </head>
+  <body>
+    <p id="inicial" data-contar>estaba al cargar</p>
+
+    <button id="traer" hx-get="/fragmento" hx-target="#destino" hx-swap="innerHTML">
+      traer un fragmento
+    </button>
+    <div id="destino"></div>
+
+    <script type="module" src="/conductor.js"></script>
+  </body>
+</html>

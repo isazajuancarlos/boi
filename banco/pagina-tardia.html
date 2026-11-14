@@ -1,0 +1,20 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: MIT -->
+<!--
+  La misma página, pero con boi llegando TARDE: se importa desde dentro del
+  manejador de `load`, cuando el documento ya está analizado. Es lo que pasa con
+  una importación dinámica, con un módulo que llega dentro de un fragmento, o
+  con un `<script type="module" async>`.
+-->
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <title>banco de boi — carga tardía</title>
+    <meta name="boi-informe" content="__RUTA_DEL_INFORME__">
+    <script src="/htmx.min.js"></script>
+  </head>
+  <body>
+    <p id="inicial" data-contar>estaba al cargar</p>
+    <script type="module" src="/conductor-tardio.js"></script>
+  </body>
+</html>

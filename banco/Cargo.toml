@@ -1,0 +1,26 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Juan Carlos Isaza
+#
+# El arnés del banco de boi, en Rust. NO viaja a ningún binario del producto:
+# prueba boi, no lo acompaña. Por eso puede tener dependencias — pero NO tiene
+# ninguna a propósito, igual que el banco node era biblioteca estándar y nada
+# más. El servidor HTTP de loopback y el lanzador de Chromium están escritos a
+# mano sobre `std`.
+
+[package]
+name = "banco-boi"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["Isaza Arenas"]
+publish = false
+
+# Sin dependencias: es el punto. Chromium entra como proceso externo, no como
+# crate; el HTTP se sirve con `std::net`.
+[dependencies]
+
+# Estándar de nacimiento (D26): las dependencias optimizadas también en debug.
+# Aquí no hay dependencias, así que no muerde — se deja por forma, para el día
+# que alguna entre con su motivo.
+[profile.dev.package."*"]
+opt-level = 3

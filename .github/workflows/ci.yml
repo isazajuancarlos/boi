@@ -1,0 +1,46 @@
+# EL VERDE LOCAL DE `boi`. NO lo corre GitHub.
+#
+# Actions está apagado en toda la cuenta desde el protocolo «solo local»
+# (2026-08-10), así que este archivo no se ejecuta en ningún runner. Sigue aquí
+# porque **es la definición del verde**, y la lee `conocimiento/cupo/verde_local.py`:
+#
+#     python3 /mnt/data/conocimiento/cupo/verde_local.py boi
+#
+# Ese guion abre este archivo, saca los `run:` en su orden y los ejecuta, para
+# que «el comando exacto del CI» no sea una frase que se copia a mano y envejece.
+#
+# ESTE ARCHIVO SE BORRÓ EL 2026-08-13 y se restauró el mismo día. Se borró
+# razonando que un workflow que nadie ejecuta es una promesa vacía; era una
+# conclusión sacada de una lectura superficial (directiva 2). El archivo tenía un
+# segundo oficio que no estaba escrito en él, y al quitarlo `verde_local.py boi`
+# pasó a contestar «NO EXISTE» — o sea que boi se quedó sin forma declarada de
+# decir si está verde. Ahora el oficio está escrito arriba.
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}${{ github.ref == 'refs/heads/main' && format('-{0}', github.sha) || '' }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
+jobs:
+  pruebas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      # El arnés es Rust (std puro, sin crates): migrado de node el 2026-09-28
+      # porque node dejó de estar en la máquina y no es del stack (ver
+      # banco/MIGRACION.md). `cargo` y `chromium` se asumen en la máquina, igual
+      # que en el resto de proyectos Rust.
+      #
+      # El banco de navegador ARRANCA CHROMIUM y no se salta si falta: falla con
+      # su nombre. Por eso el verde de boi no se puede dar en una máquina sin
+      # navegador — que es exactamente lo que se quiere decir con «verde».
+      - run: cargo test --manifest-path banco/Cargo.toml
